@@ -1,0 +1,8 @@
+Flask
+flask-mysql
+requests
+flask-cors
+flask-moment
+flask_socketio
+eventlet
+Blueprint
