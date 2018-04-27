@@ -37,9 +37,14 @@ def register():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = ""
+    query = "SELECT * FROM register WHERE member_id LIKE "+data['member_id']
     cursor.execute(query)
     result = cursor.fetchone()
+    if result is None:
+        return "Register success" + str(result)
+    else:
+        return "Cannot Register"
+    cursor.close()
 
 @app.route("/hello",methods=['POST'])
 def hello():
