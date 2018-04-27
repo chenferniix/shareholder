@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 from json import dumps
 from json import loads
 import json
-import requests
+# import requests
 from flask_cors import CORS, cross_origin
 import os
 
@@ -18,7 +18,7 @@ CORS(app)
 app.register_blueprint(sql)
 
 
-@app.route("/login",methods=['post'])
+@app.route("/login",methods=['POST'])
 def login():
     data = request.json
     conn = mysql.connect()
@@ -27,14 +27,21 @@ def login():
     cursor.execute(query)
     result = cursor.fetchone()
     if result is not None:
-        return "Login success"
+        return "Login success" + str(result)
     else:
         return "Cannont login"
     cursor.close()
 
+@app.route("/register",methods=['POST'])
+def register():
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    query = ""
+    cursor.execute(query)
+    result = cursor.fetchone()
 
-
-@app.route("/hello")
+@app.route("/hello",methods=['POST'])
 def hello():
     current_app.logger.info("korkla")
     return "korkla"
