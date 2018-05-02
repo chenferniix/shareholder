@@ -37,11 +37,11 @@ def register():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT * FROM register WHERE member_id LIKE "+data['member_id']
+    query = "SELECT * FROM register WHERE member_id = '1001' "
     cursor.execute(query)
     result = cursor.fetchone()
     if result is None:
-        return "Register success" + str(result)
+        return "Register success"
     else:
         return "Cannot Register"
     cursor.close()
