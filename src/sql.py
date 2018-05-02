@@ -11,6 +11,6 @@ app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'devops@Pass01'
-app.config['MYSQL_DATABASE_DB'] = 'shareholder'
+app.config['MYSQL_DATABASE_DB'] = 'shareholder_meeting'
 app.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
 mysql.init_app(app)
