@@ -13,9 +13,15 @@ MYDIR = os.path.dirname(__file__)
 app = Flask(__name__)
 
 from src.sql import *
+from src.manageAgenda import *
+from src.manageShareholder import *
+from src.QRServer import *
 
 CORS(app)
 app.register_blueprint(sql)
+app.register_blueprint(manageAgenda)
+app.register_blueprint(manageShareholder)
+app.register_blueprint(qrserver)
 
 
 @app.route("/login",methods=['POST'])
@@ -23,7 +29,7 @@ def login():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT * FROM user WHERE username LIKE '"+data['username']+"' AND password LIKE "+data['password']
+    query = "SELECT * FROM admin WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"'"
     cursor.execute(query)
     result = cursor.fetchone()
     if result is not None:
