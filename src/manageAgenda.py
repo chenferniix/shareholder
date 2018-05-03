@@ -1,3 +1,115 @@
 from flask import Flask, request, jsonify, Blueprint
 from flaskext.mysql import MySQL
+import uuid
+from src.sql import *
 manageAgenda = Blueprint('manageAgenda', __name__)
+
+
+@manageAgenda.route("/getAgendaInYear/<year>",methods=['get'])
+def getAgendaInYear(year):
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    try:
+        query = "SELECT * FROM agenda WHERE year = %s AND valid = 1"%(year)
+        cursor.execute(query)
+        jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+        return jsonify(jsonResult)
+    except:
+        obj = { "status" : "fail", "message" : "Error sql excute" }
+        return
+
+
+@manageAgenda.route("/addAgenda",methods=['POST'])
+def addAgenda():
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    uuid = uuid.uuid4()[0:7]
+    try:
+        query = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(uuid, data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+
+        cursor.execute(query)
+        conn.commit()
+        data['uuid'] = uuid
+        obj = { "status" : "success", "data" :  data }
+    except:
+        obj = { "status" : "fail", "data" :  data , "message": "Insert Error"}
+    return jsonify(obj)
+
+    cursor.close()
+
+
+@manageAgenda.route("/editAgenda",methods=['POST'])
+def editAgenda():
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # ------ check uuid is exist ----------------
+    try:
+        query = "SELECT * FROM agenda WHERE uuid LIKE '%s' AND valid = 1 ORDER BY id DESC"%(data['uuid'])
+        cursor.execute(query)
+        result = cursor.fetchone()
+        if result is None:
+
+            # jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+            obj = { "status" : "fail", "message" : "Dont have uuid : %s in agenda table "%(uuid) }
+            return jsonify(obj)
+    except:
+        obj = { "status" : "fail", "message" : "Dont have uuid in data" }
+
+        return jsonify(obj)
+
+    # --------- insert new row and set old to invalid ---------------
+    try:
+
+        query = "UPDATE agenda SET valid = 0 WHERE uuid LIKE %s"%(data['uuid'])
+        cursor.execute(query)
+
+        query2 = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(data['uuid'], data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+
+        cursor.execute(query2)
+        conn.commit()
+        obj = { "status" : "success", "data" :  data }
+    except:
+        obj = { "status" : "fail", "data" :  data }
+    return jsonify(obj)
+
+    cursor.close()
+
+
+@manageAgenda.route("/removeAgenda",methods=['POST'])
+def removeAgenda():
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # ------ check uuid is exist ----------------
+    try:
+        query = "SELECT * FROM agenda WHERE uuid LIKE '%s' AND valid = 1 ORDER BY id DESC"%(data['uuid'])
+        cursor.execute(query)
+        result = cursor.fetchone()
+        if result is None:
+
+            #jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+            obj = { "status" : "fail", "message" : "Dont have uuid : %s in agenda table "%(uuid) }
+            return jsonify(obj)
+        else:
+            jsonResult = {columns[index][0]:column for index, column in enumerate(cursor.fetchone())}
+            try:
+
+                query = "UPDATE agenda SET valid = 0 WHERE uuid LIKE %s"%(data['uuid'])
+                cursor.execute(query)
+                conn.commit()
+                obj = { "status":"remove success", "data": jsonResult }
+                return jsonify(obj)
+
+            except:
+                obj = { "status":"remove fail", "data": jsonResult }
+                return jsonify(obj)
+
+    except:
+        obj = { "status" : "fail", "message" : "Dont have uuid in data" }
+
+        return jsonify(obj)

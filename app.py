@@ -29,28 +29,21 @@ def login():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT * FROM admin WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"'"
+    query = "SELECT * FROM admin WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"' AND valid = 1  "
     cursor.execute(query)
     result = cursor.fetchone()
     if result is not None:
-        return "Login success" + str(result)
+        columns = cursor.description
+        jsonResult = {columns[index][0]:column for index, column in enumerate(result)}
+        # jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+        obj = { "status" : "success", "info" :  jsonResult }
+        return jsonify(obj)
     else:
-        return "Cannont login"
+        obj = { "status" : "fail" }
+        return jsonify(obj)
     cursor.close()
 
-@app.route("/register",methods=['POST'])
-def register():
-    data = request.json
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    query = "SELECT * FROM register WHERE member_id = '1001' "
-    cursor.execute(query)
-    result = cursor.fetchone()
-    if result is None:
-        return "Register success"
-    else:
-        return "Cannot Register"
-    cursor.close()
+
 
 @app.route("/hello",methods=['POST'])
 def hello():
