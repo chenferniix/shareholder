@@ -29,7 +29,7 @@ def login():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT * FROM admin WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"' AND valid = 1  "
+    query = "SELECT * FROM admin INNER JOIN role on admin.role = role.roleid WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"' AND valid = 1  "
     cursor.execute(query)
     result = cursor.fetchone()
     if result is not None:
@@ -42,6 +42,7 @@ def login():
         obj = { "status" : "fail" }
         return jsonify(obj)
     cursor.close()
+
 
 
 

@@ -119,5 +119,5 @@ def removeAgenda():
     return jsonify(obj)
 
 
-@manageAgenda.route("/removeAgenda",methods=['POST'])
-def removeAgenda():
+# @manageAgenda.route("/removeAgenda",methods=['POST'])
+# def removeAgenda():
