@@ -14,10 +14,12 @@ def getAgendaInYear(year):
         query = "SELECT * FROM agenda WHERE year = %s AND valid = 1"%(year)
         cursor.execute(query)
         jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
-        return jsonify(jsonResult)
+
     except:
-        obj = { "status" : "fail", "message" : "Error sql excute" }
-        return
+        jsonResult = { "status" : "fail", "message" : "Error sql excute" }
+
+    cursor.close()
+    return jsonify(jsonResult)
 
 
 @manageAgenda.route("/addAgenda",methods=['POST'])
@@ -55,10 +57,11 @@ def editAgenda():
 
             # jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
             obj = { "status" : "fail", "message" : "Dont have uuid : %s in agenda table "%(uuid) }
+            cursor.close()
             return jsonify(obj)
     except:
         obj = { "status" : "fail", "message" : "Dont have uuid in data" }
-
+        cursor.close()
         return jsonify(obj)
 
     # --------- insert new row and set old to invalid ---------------
@@ -68,15 +71,15 @@ def editAgenda():
         cursor.execute(query)
 
         query2 = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(data['uuid'], data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
-
         cursor.execute(query2)
+
         conn.commit()
         obj = { "status" : "success", "data" :  data }
     except:
         obj = { "status" : "fail", "data" :  data }
-    return jsonify(obj)
 
     cursor.close()
+    return jsonify(obj)
 
 
 @manageAgenda.route("/removeAgenda",methods=['POST'])
@@ -94,6 +97,7 @@ def removeAgenda():
 
             #jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
             obj = { "status" : "fail", "message" : "Dont have uuid : %s in agenda table "%(uuid) }
+            cursor.close()
             return jsonify(obj)
         else:
             jsonResult = {columns[index][0]:column for index, column in enumerate(cursor.fetchone())}
@@ -103,13 +107,17 @@ def removeAgenda():
                 cursor.execute(query)
                 conn.commit()
                 obj = { "status":"remove success", "data": jsonResult }
-                return jsonify(obj)
 
             except:
                 obj = { "status":"remove fail", "data": jsonResult }
-                return jsonify(obj)
+
 
     except:
         obj = { "status" : "fail", "message" : "Dont have uuid in data" }
 
-        return jsonify(obj)
+    cursor.close()
+    return jsonify(obj)
+
+
+@manageAgenda.route("/removeAgenda",methods=['POST'])
+def removeAgenda():
