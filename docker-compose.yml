@@ -2,6 +2,7 @@ version: '2'
 
 services:
     shareholder:
+        image: shareholder
         ports:
             - "5000:5000"
         volumes:
