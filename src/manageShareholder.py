@@ -18,16 +18,16 @@ def getAllShareholder(term,year):
 
     # return jsonify(jsonResult)
 
-
-
-
-
+    returnObj = []
     for index,obj in enumerate(jsonResult):
-        jsonResult[index]['text'] = "%s %s %s %s"%(jsonResult[index]['firstname'],jsonResult[index]['lastname'],jsonResult[index]['companyname'],jsonResult[index]['memberid'])
+        text = "%s %s %s %s"%(jsonResult[index]['firstname'],jsonResult[index]['lastname'],jsonResult[index]['companyname'],jsonResult[index]['memberid'])
+        returnObj.append({'text': text, 'info': jsonResult[index] })
+        # jsonResult[index]['text'] = "%s %s %s %s"%(jsonResult[index]['firstname'],jsonResult[index]['lastname'],jsonResult[index]['companyname'],jsonResult[index]['memberid'])
+
     # jsonResult['status'] = "success"
         # result['data'] = jsonResult
     # except:
     #     jsonResult = { "status" : "fail", "message" : "Error sql excute" }
 
     cursor.close()
-    return jsonify(jsonResult)
+    return jsonify(returnObj)
