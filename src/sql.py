@@ -14,3 +14,9 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'devops@Pass01'
 app.config['MYSQL_DATABASE_DB'] = 'shareholder_meeting'
 app.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
 mysql.init_app(app)
+
+def toJson(data,columns):
+    results = []
+    for row in data:
+        results.append(dict(zip(columns, row)))
+    return results
