@@ -19,6 +19,9 @@ def getAllShareholder(term,year):
     # return jsonify(jsonResult)
 
 
+
+
+
     for index,obj in enumerate(jsonResult):
         jsonResult[index]['text'] = "%s %s %s %s"%(jsonResult[index]['firstname'],jsonResult[index]['lastname'],jsonResult[index]['companyname'],jsonResult[index]['memberid'])
     # jsonResult['status'] = "success"
