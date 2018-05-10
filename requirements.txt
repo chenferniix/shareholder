@@ -6,4 +6,4 @@ flask-moment
 flask_socketio
 eventlet
 Blueprint
-pandas
+Pandas
