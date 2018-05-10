@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, jsonify, Blueprint
 from flaskext.mysql import MySQL
 sql = Blueprint('sql', __name__)
 mysql = MySQL()
 # app.config['MYSQL_DATABASE_USER'] = 'root'
 # app.config['MYSQL_DATABASE_PASSWORD'] = '^dglnvg8hkw,j0y[,nv-'
-# app.config['MYSQL_DATABASSE_DB'] = 'smp'
+# app.config['MYSQL_DATABASE_DB'] = 'smp'
 # app.config['MYSQL_DATABASE_HOST'] = '203.150.57.159'
 
 app = Flask(__name__)
@@ -20,3 +23,7 @@ def toJson(data,columns):
     for row in data:
         results.append(dict(zip(columns, row)))
     return results
+
+def fetchOnetoJson(data,columns):
+    result =  dict(zip(columns, data))
+    return result
