@@ -24,6 +24,7 @@ def getAllShareholder(term,year):
 
     returnObj = []
     for index,obj in enumerate(jsonResult):
+        text = ""
         if(jsonResult[index]['title'] != 'บริษัท'.decode('utf-8')):
             text = "%s %s %s"%(jsonResult[index]['firstname'],jsonResult[index]['lastname'],jsonResult[index]['memberid'])
         else:
