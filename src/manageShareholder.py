@@ -92,10 +92,10 @@ def register(term,year):
         try:
             query2 = ''
             if data['registertype'] == 'proxy':
-                query2 = "UPDATE `shareholder%s/%s` SET `regrister` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP, `proxytitle` = '%s', `proxyname`= '%s', `proxylastname` = '%s' WHERE `memberid` = %s"%(term,year,data['registerby'],data['proxytitle'],data['proxyname'],data['proxylastname'],data['memberid'])
+                query2 = "UPDATE `shareholder%s/%s` SET `register` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP, `proxytitle` = '%s', `proxyname`= '%s', `proxylastname` = '%s' WHERE `memberid` = %s"%(term,year,data['registerby'],data['proxytitle'],data['proxyname'],data['proxylastname'],data['memberid'])
 
             else:
-                query2 = "UPDATE `shareholder%s/%s` SET `regrister` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP WHERE `memberid` = %s"%(term,year,data['registerby'],data['memberid'])
+                query2 = "UPDATE `shareholder%s/%s` SET `register` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP WHERE `memberid` = %s"%(term,year,data['registerby'],data['memberid'])
             cursor.execute(query2)
             conn.commit()
             query3 = 'SELECT * FROM `shareholder%s/%s` WHERE `memberid` = %s'%(term,year,data['memberid'])
