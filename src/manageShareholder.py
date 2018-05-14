@@ -74,3 +74,42 @@ def importShareholder():
     data = {"status": "success"}
 
     return jsonify(data)
+
+
+@manageShareholder.route("/register/<term>/<year>",methods=['post'])
+def register(term,year):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    data = request.json
+    query = 'SELECT * FROM `shareholder%s/%s` WHERE `memberid` = %s'%(term,year,data['memberid'])
+    cursor.execute(query)
+    result = cursor.fetchone()
+    returnData = {}
+    if result is not None:
+        # columns = [column[0] for column in cursor.description]
+        # jsonResult = fetchOnetoJson(result,columns)
+        jsonResult = {}
+        try:
+            query2 = ''
+            if data['registertype'] == 'proxy':
+                query2 = "UPDATE `shareholder%s/%s` SET `regrister` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP, `proxytitle` = '%s', `proxyname`= '%s', `proxylastname` = '%s' WHERE `memberid` = %s"%(term,year,data['registerby'],data['proxytitle'],data['proxyname'],data['proxylastname'],data['memberid'])
+
+            else:
+                query2 = "UPDATE `shareholder%s/%s` SET `regrister` = '1', `registerby`= '%s', `registertime` = CURRENT_TIMESTAMP WHERE `memberid` = %s"%(term,year,data['registerby'],data['memberid'])
+            cursor.execute(query2)
+            conn.commit()
+            query3 = 'SELECT * FROM `shareholder%s/%s` WHERE `memberid` = %s'%(term,year,data['memberid'])
+            cursor.execute(query3)
+            result = cursor.fetchone()
+            columns = [column[0] for column in cursor.description]
+            jsonResult = fetchOnetoJson(result,columns)
+            returnData = {'status': 'success', 'info': jsonResult}
+
+        except:
+            returnData = {'status': 'fail', 'info': 'register error'}
+
+    else:
+        returnData = {'status': 'fail', 'info': 'Not found memberid :%s'%(data['memberid'])}
+
+
+    return jsonify(returnData)
