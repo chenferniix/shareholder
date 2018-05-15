@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 from json import dumps
 from json import loads
 import json
-import requests
+# import requests
 from flask_cors import CORS, cross_origin
 import os
 
@@ -13,28 +13,42 @@ MYDIR = os.path.dirname(__file__)
 app = Flask(__name__)
 
 from src.sql import *
+from src.calculateScore import *
+from src.manageAgenda import *
+from src.manageShareholder import *
+from src.QRServer import *
 
 CORS(app)
 app.register_blueprint(sql)
+app.register_blueprint(calculateScore)
+app.register_blueprint(manageAgenda)
+app.register_blueprint(manageShareholder)
+app.register_blueprint(qrserver)
 
 
-@app.route("/login",methods=['post'])
+@app.route("/login",methods=['POST'])
 def login():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT * FROM user WHERE username LIKE '"+data['username']+"' AND password LIKE "+data['password']
+    query = "SELECT * FROM admin INNER JOIN role on admin.role = role.roleid WHERE username LIKE '"+data['username']+"' AND password LIKE '"+data['password']+"' AND valid = 1  "
     cursor.execute(query)
     result = cursor.fetchone()
     if result is not None:
-        return "Login success"
+        columns = cursor.description
+        jsonResult = {columns[index][0]:column for index, column in enumerate(result)}
+        # jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+        obj = { "status" : "success", "info" :  jsonResult }
+        return jsonify(obj)
     else:
-        return "Cannont login"
+        obj = { "status" : "fail" }
+        return jsonify(obj)
     cursor.close()
 
 
 
-@app.route("/hello")
+
+@app.route("/hello",methods=['POST'])
 def hello():
     current_app.logger.info("korkla")
     return "korkla"
