@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 from src.sql import *
 from src.calculateScore import *
+from src.calcu2 import *
 from src.manageAgenda import *
 from src.manageShareholder import *
 from src.QRServer import *
@@ -21,6 +22,7 @@ from src.QRServer import *
 CORS(app)
 app.register_blueprint(sql)
 app.register_blueprint(calculateScore)
+app.register_blueprint(calcu2)
 app.register_blueprint(manageAgenda)
 app.register_blueprint(manageShareholder)
 app.register_blueprint(qrserver)

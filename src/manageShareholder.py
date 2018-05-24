@@ -72,7 +72,7 @@ def importShareholder():
     conn.commit()
 
     data = {"status": "success"}
-
+    cursor.close()
     return jsonify(data)
 
 
@@ -111,5 +111,5 @@ def register(term,year):
     else:
         returnData = {'status': 'fail', 'info': 'Not found memberid :%s'%(data['memberid'])}
 
-
+    cursor.close()
     return jsonify(returnData)
