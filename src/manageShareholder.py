@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from flask import Flask, request, jsonify, Blueprint
-from flaskext.mysql import MySQL
 from src.sql import *
-import pandas as pd
-manageShareholder = Blueprint('manageShareholder', __name__)
 
-@manageShareholder.route("/getAllShareholder/<term>/<year>",methods=['get'])
+@app.route("/getAllShareholder/<term>/<year>",methods=['get'])
 def getAllShareholder(term,year):
     data = request.json
 
@@ -42,7 +37,7 @@ def getAllShareholder(term,year):
 
 
 
-@manageShareholder.route("/importShareholder",methods=['get'])
+@app.route("/importShareholder",methods=['get'])
 def importShareholder():
     df = pd.read_excel('shareholderFile/INET_XM_230418.xlsx', header=0)
     conn = mysql.connect()
@@ -76,7 +71,7 @@ def importShareholder():
     return jsonify(data)
 
 
-@manageShareholder.route("/register/<term>/<year>",methods=['post'])
+@app.route("/register/<term>/<year>",methods=['post'])
 def register(term,year):
     conn = mysql.connect()
     cursor = conn.cursor()

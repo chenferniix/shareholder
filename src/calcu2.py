@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from flask import Flask, request, jsonify, Blueprint
-from flaskext.mysql import MySQL
 from src.sql import *
-calcu2 = Blueprint('calcu2', __name__)
 
-@calcu2.route("/calculateTheScore/<term>/<year>",methods=['post'])
+@app.route("/calculateTheScore/<term>/<year>",methods=['post'])
 def calculateTheScore(term,year):
     # term,year,uuid,createby
     data = request.json

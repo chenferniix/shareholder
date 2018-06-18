@@ -1,16 +1,16 @@
-from flask import Flask, request, jsonify, Blueprint,render_template, session,current_app
+from flask import Flask, request, jsonify, session,current_app
 from flaskext.mysql import MySQL
 from json import dumps
 from json import loads
 import json
 # import requests
-from flask_cors import CORS, cross_origin
+# from flask_cors import CORS, cross_origin
 import os
 
 
 
 MYDIR = os.path.dirname(__file__)
-app = Flask(__name__)
+# app = Flask(__name__)
 
 from src.sql import *
 from src.calculateScore import *
@@ -19,13 +19,7 @@ from src.manageAgenda import *
 from src.manageShareholder import *
 from src.QRServer import *
 
-CORS(app)
-app.register_blueprint(sql)
-app.register_blueprint(calculateScore)
-app.register_blueprint(calcu2)
-app.register_blueprint(manageAgenda)
-app.register_blueprint(manageShareholder)
-app.register_blueprint(qrserver)
+# CORS(app)
 
 
 @app.route("/login",methods=['POST'])

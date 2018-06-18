@@ -1,11 +1,8 @@
-from flask import Flask, request, jsonify, Blueprint
-from flaskext.mysql import MySQL
-import uuid
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from src.sql import *
-manageAgenda = Blueprint('manageAgenda', __name__)
 
-
-@manageAgenda.route("/getAgendaInYear/<year>",methods=['get'])
+@app.route("/getAgendaInYear/<year>",methods=['get'])
 def getAgendaInYear(year):
     data = request.json
     conn = mysql.connect()
@@ -22,7 +19,7 @@ def getAgendaInYear(year):
     return jsonify(jsonResult)
 
 
-@manageAgenda.route("/addAgenda",methods=['POST'])
+@app.route("/addAgenda",methods=['POST'])
 def addAgenda():
     # uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby
     data = request.json
@@ -43,7 +40,7 @@ def addAgenda():
     cursor.close()
 
 
-@manageAgenda.route("/editAgenda",methods=['POST'])
+@app.route("/editAgenda",methods=['POST'])
 def editAgenda():
     #  uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby
     data = request.json
@@ -84,7 +81,7 @@ def editAgenda():
     return jsonify(obj)
 
 
-@manageAgenda.route("/removeAgenda",methods=['POST'])
+@app.route("/removeAgenda",methods=['POST'])
 def removeAgenda():
     # uuid
     data = request.json
@@ -122,5 +119,5 @@ def removeAgenda():
     return jsonify(obj)
 
 
-# @manageAgenda.route("/removeAgenda",methods=['POST'])
+# @app.route("/removeAgenda",methods=['POST'])
 # def removeAgenda():

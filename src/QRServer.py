@@ -1,9 +1,8 @@
-from flask import Flask, request, jsonify, Blueprint, json
-from flaskext.mysql import MySQL
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from src.sql import *
-qrserver = Blueprint('qrserver', __name__)
 
-@qrserver.route("/vote",methods=['post'])
+@app.route("/vote",methods=['post'])
 def vote():
     data = request.json
     conn = mysql.connect()
@@ -42,7 +41,7 @@ def vote():
 
 
 
-@qrserver.route("/checkQRCode",methods=['post'])
+@app.route("/checkQRCode",methods=['post'])
 def checkQRCode():
     data = request.json
     conn = mysql.connect()
