@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 from src.sql import *
 manageShareholder = Blueprint('manageShareholder', __name__)
 
-@manageShareholder.route("/getAllShareholder/<term>/<year>",methods=['get'])
+@manageShareholder.route("/getAllShareholder/<term>/<year>",methods=['GET'])
 def getAllShareholder(term,year):
     data = request.json
 

@@ -43,6 +43,22 @@ def login():
         return jsonify(obj)
     cursor.close()
 
+@app.route("/getYear",methods=['POST'])
+def getYear():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    query = "SELECT DISTINCT year FROM Question WHERE 1"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    columns = [column[0] for column in cursor.description]
+    jsonResult = toJson(result,columns)
+    # arr = []
+    # for obj in result:
+    #     arr.append(obj[0])
+    for index,obj in enumerate(jsonResult):
+        jsonResult[index]['text'] = "%s"%(jsonResult[index]['year'])
+    cursor.close()
+    return jsonify(jsonResult)
 
 
 
@@ -50,6 +66,18 @@ def login():
 def hello():
     current_app.logger.info("korkla")
     return "korkla"
+
+
+@app.route("/addhello",methods=['POST'])
+def addhello():
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    data['status'] = 200
+    query = "SELECT * FROM admin WHERE 1"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return jsonify(result)
 
 if __name__ == "__main__":
     # socketio.run(app,debug=True,host='0.0.0.0',certfile='ssl/thaidotcom.cloud.cert',keyfile='ssl/*.thaidotcom.key')

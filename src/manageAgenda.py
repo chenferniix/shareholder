@@ -27,16 +27,19 @@ def addAgenda():
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
-    uuid = uuid.uuid4()[0:7]
-    try:
-        query = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(uuid, data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+    # uuid = ""
+    uid = str(uuid.uuid4())[0:7]
+    # uuid = uuid.uuid4()[0:7]
+    # return uid
+    # try:
+    query = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(uid, data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
 
-        cursor.execute(query)
-        conn.commit()
-        data['uuid'] = uuid
-        obj = { "status" : "success", "data" :  data }
-    except:
-        obj = { "status" : "fail", "data" :  data , "message": "Insert Error"}
+    cursor.execute(query)
+    conn.commit()
+    data['uuid'] = uid
+    obj = { "status" : "success", "data" :  data }
+    # except:
+        # obj = { "status" : "fail", "data" :  data , "message": "Insert Error"}
     return jsonify(obj)
 
     cursor.close()
