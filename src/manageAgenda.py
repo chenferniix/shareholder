@@ -1,11 +1,8 @@
-from flask import Flask, request, jsonify, Blueprint
-from flaskext.mysql import MySQL
-import uuid
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from src.sql import *
-manageAgenda = Blueprint('manageAgenda', __name__)
 
-
-@manageAgenda.route("/getAgendaInYear/<year>",methods=['get'])
+@app.route("/getAgendaInYear/<year>",methods=['get'])
 def getAgendaInYear(year):
     data = request.json
     conn = mysql.connect()
@@ -22,11 +19,13 @@ def getAgendaInYear(year):
     return jsonify(jsonResult)
 
 
-@manageAgenda.route("/addAgenda",methods=['POST'])
+@app.route("/addAgenda",methods=['POST'])
 def addAgenda():
+    # uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
+
     # uuid = ""
     uid = str(uuid.uuid4())[0:7]
     # uuid = uuid.uuid4()[0:7]
@@ -40,13 +39,15 @@ def addAgenda():
     obj = { "status" : "success", "data" :  data }
     # except:
         # obj = { "status" : "fail", "data" :  data , "message": "Insert Error"}
+
     return jsonify(obj)
 
     cursor.close()
 
 
-@manageAgenda.route("/editAgenda",methods=['POST'])
+@app.route("/editAgenda",methods=['POST'])
 def editAgenda():
+    #  uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -73,7 +74,7 @@ def editAgenda():
         query = "UPDATE agenda SET valid = 0 WHERE uuid LIKE %s"%(data['uuid'])
         cursor.execute(query)
 
-        query2 = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(data['uuid'], data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+        query2 = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s',"%(data['uuid'], data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['createby'])
         cursor.execute(query2)
 
         conn.commit()
@@ -85,8 +86,9 @@ def editAgenda():
     return jsonify(obj)
 
 
-@manageAgenda.route("/removeAgenda",methods=['POST'])
+@app.route("/removeAgenda",methods=['POST'])
 def removeAgenda():
+    # uuid
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -106,7 +108,7 @@ def removeAgenda():
             jsonResult = {columns[index][0]:column for index, column in enumerate(cursor.fetchone())}
             try:
 
-                query = "UPDATE agenda SET valid = 0 WHERE uuid LIKE %s"%(data['uuid'])
+                query = "UPDATE `agenda` SET valid = 0 WHERE uuid LIKE %s"%(data['uuid'])
                 cursor.execute(query)
                 conn.commit()
                 obj = { "status":"remove success", "data": jsonResult }
@@ -122,5 +124,23 @@ def removeAgenda():
     return jsonify(obj)
 
 
-# @manageAgenda.route("/removeAgenda",methods=['POST'])
+@app.route("/getYear",methods=['POST'])
+def getYear():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    query = "SELECT DISTINCT year FROM Question WHERE 1"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    columns = [column[0] for column in cursor.description]
+    jsonResult = toJson(result,columns)
+    # arr = []
+    # for obj in result:
+    #     arr.append(obj[0])
+    for index,obj in enumerate(jsonResult):
+        jsonResult[index]['text'] = "%s"%(jsonResult[index]['year'])
+    cursor.close()
+    return jsonify(jsonResult)
+
+
+# @app.route("/removeAgenda",methods=['POST'])
 # def removeAgenda():
