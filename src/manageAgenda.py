@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from src.sql import *
+import uuid
 
-@app.route("/getAgendaInYear/<year>",methods=['get'])
-def getAgendaInYear(year):
+@app.route("/getAgendaInYear/<term>/<year>",methods=['get'])
+def getAgendaInYear(term,year):
     data = request.json
     conn = mysql.connect()
     cursor = conn.cursor()
     try:
-        query = "SELECT * FROM agenda WHERE year = %s AND valid = 1"%(year)
+        query = "SELECT * FROM agenda WHERE term = %s AND year = %s AND valid = 1"%(term,year)
         cursor.execute(query)
-        jsonResult = [{columns[index][0]:column for index, column in enumerate(value)}   for value in cursor.fetchall()]
+        data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        jsonResult = toJson(data,columns)
 
     except:
         jsonResult = { "status" : "fail", "message" : "Error sql excute" }
@@ -31,7 +34,8 @@ def addAgenda():
     # uuid = uuid.uuid4()[0:7]
     # return uid
     # try:
-    query = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES '%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(uid, data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+    query = "INSERT INTO agenda (uuid,agenda,subagenda,title,short_title,imagepath,term,year,createby) VALUES  ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(uid, data['agenda'], data['subagenda'], data['title'], data['short_title'], data['imagepath'], data['term'], data['year'], data['username'])
+    # return query
 
     cursor.execute(query)
     conn.commit()
@@ -124,11 +128,11 @@ def removeAgenda():
     return jsonify(obj)
 
 
-@app.route("/getYear",methods=['POST'])
-def getYear():
+@app.route("/getTermYear",methods=['POST'])
+def getTermYear():
     conn = mysql.connect()
     cursor = conn.cursor()
-    query = "SELECT DISTINCT year FROM Question WHERE 1"
+    query = "SELECT  * FROM meeting WHERE valid = 1"
     cursor.execute(query)
     result = cursor.fetchall()
     columns = [column[0] for column in cursor.description]
@@ -136,8 +140,8 @@ def getYear():
     # arr = []
     # for obj in result:
     #     arr.append(obj[0])
-    for index,obj in enumerate(jsonResult):
-        jsonResult[index]['text'] = "%s"%(jsonResult[index]['year'])
+    # for index,obj in enumerate(jsonResult):
+    #     jsonResult[index]['text'] = "%s"%(jsonResult[index]['year'])
     cursor.close()
     return jsonify(jsonResult)
 
